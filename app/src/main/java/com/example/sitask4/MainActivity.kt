@@ -1,18 +1,24 @@
 package com.example.sitask4
 
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.navigation.NavigationView
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var navController: NavController
     private lateinit var bottomNavigationView: BottomNavigationView
+    private lateinit var drawerNavigationView: NavigationView
+    private lateinit var toggle: ActionBarDrawerToggle
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,6 +33,8 @@ class MainActivity : AppCompatActivity() {
         navController = Navigation.findNavController(this, R.id.nav_host_fragment)
 
         bottomNavigationView = findViewById(R.id.bottom_navigation)
+
+        //setting the logic of bottom navigation
 
         val userName = bottomNavigationView.menu.findItem(R.id.username)
         userName.setOnMenuItemClickListener {
@@ -63,6 +71,59 @@ class MainActivity : AppCompatActivity() {
             true
         }
 
+
+        // setting the logic for drawer navigation
+
+        val drawerLayout : DrawerLayout = findViewById(R.id.drawer_layout)
+        toggle = ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close)
+        drawerLayout.addDrawerListener(toggle)
+        toggle.syncState()
+
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        drawerNavigationView = findViewById(R.id.nav_view)
+
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        drawerNavigationView.setNavigationItemSelectedListener {
+
+            when(it.itemId){
+                R.id.home -> {
+                    navController.navigate(R.id.homeFragment2)
+                    bottomNavigationView.menu.findItem(R.id.home).isChecked = true
+                }
+                R.id.badges ->{
+                    navController.navigate(R.id.badgeFragment2)
+                    bottomNavigationView.menu.findItem(R.id.badges).isChecked = true
+                }
+                R.id.solved ->{
+                    navController.navigate(R.id.solvedFragment2)
+                    bottomNavigationView.menu.findItem(R.id.solved).isChecked = true
+                }
+                R.id.submission ->{
+                    navController.navigate(R.id.submissionFragment2)
+                    bottomNavigationView.menu.findItem(R.id.submission).isChecked = true
+                }
+                R.id.username ->{
+                    navController.navigate(R.id.userFragment2)
+                    bottomNavigationView.menu.findItem(R.id.username).isChecked = true
+                }
+                R.id.change ->{
+                    navController.navigate(R.id.homeFragment2)
+                    bottomNavigationView.menu.findItem(R.id.home).isChecked = true
+                }
+            }
+            drawerLayout.closeDrawers()
+            true
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        if(toggle.onOptionsItemSelected(item)){
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
     override fun onBackPressed() {
         if (navController.currentDestination?.id != R.id.homeFragment2) {
