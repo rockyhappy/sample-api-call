@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import java.net.HttpRetryException
 
 class HomeFragment : Fragment() {
     private lateinit var textView: TextView
@@ -30,24 +31,19 @@ class HomeFragment : Fragment() {
 
 
     }
-
-    init {
-
-    }
-
     fun apiCall(userName: String): UserData {
-        var service: UserData =
-            UserData("", "", "", null, "", "", "", "", 0, 0, null, null, null, null, null)
-        lifecycleScope.launch {
-            coroutineScope {
+        var service: UserData = UserData("", "", "", null, "", "", "", "", 0, 0, null, null, null, null, null)
+        lifecycleScope.launch {//dispatcher is Main
                 try {
                     service = RetrofitInstance.api.getUserData(userName)
-                    println(service)
                     textView.text = service.toString()
-                } catch (e: Exception) {
+                    println(service.skillTags?.size)
+                }
+                catch (e: Exception) {
                     println(e)
                 }
-
+            catch(e: HttpRetryException){
+                println(e)
             }
         }
         return service
